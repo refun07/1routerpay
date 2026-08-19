@@ -1,0 +1,152 @@
+@import 'tailwindcss';
+
+/*
+ | Design tokens — single source of truth.
+ | Tailwind v4 reads @theme and generates utilities (bg-surface, text-muted, ...),
+ | so component code never repeats a hex value.
+ */
+@theme {
+    --color-background: #090b0d;
+    --color-surface: #101316;
+    --color-surface-raised: #15191d;
+    --color-surface-soft: #191e23;
+
+    --color-text-primary: #f5f7f8;
+    --color-text-secondary: #9ca6af;
+    --color-text-muted: #68727c;
+
+    --color-border-subtle: #242a30;
+    --color-border-strong: #343c44;
+
+    --color-brand: #dffe52;
+    --color-brand-hover: #e8ff85;
+    --color-brand-dark: #a8c830;
+
+    --color-success: #4ade80;
+    --color-warning: #facc15;
+    --color-danger: #fb7185;
+    --color-info: #60a5fa;
+
+    --font-sans:
+        'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-mono:
+        'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+
+    /* Page grid — section 8 of the spec */
+    --spacing-gutter: 1.125rem;
+    --container-content: 1220px;
+    --container-wide: 1320px;
+}
+
+@layer base {
+    :root {
+        color-scheme: dark;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        background-color: var(--color-background);
+        color: var(--color-text-primary);
+        font-family: var(--font-sans);
+        font-feature-settings: 'cv11', 'ss01';
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* Visible, consistent focus for every interactive element. */
+    :focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    ::selection {
+        background: color-mix(in srgb, var(--color-brand) 30%, transparent);
+        color: var(--color-text-primary);
+    }
+
+    /* Scrollbars inside code panes and tables. */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-border-strong) transparent;
+    }
+    *::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+    }
+    *::-webkit-scrollbar-thumb {
+        background: var(--color-border-strong);
+        border-radius: 999px;
+    }
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+}
+
+@layer components {
+    /* Hero-only background grid. Opacity intentionally very low. */
+    .bg-hero-grid {
+        background-image:
+            linear-gradient(to right, var(--color-border-subtle) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--color-border-subtle) 1px, transparent 1px);
+        background-size: 64px 64px;
+        opacity: 0.28;
+        mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 78%);
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    /* Scroll reveal — tiny translate, opt-out under reduced motion. */
+    .reveal {
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+            opacity 500ms cubic-bezier(0.16, 1, 0.3, 1),
+            transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal[data-visible='true'] {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .reveal {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Hero graphic: a pulse travelling down each connector. */
+@keyframes heroPulse {
+    0% {
+        transform: translate(-50%, 0);
+        opacity: 0;
+    }
+    20%,
+    80% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, 2.5rem);
+        opacity: 0;
+    }
+}
