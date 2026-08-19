@@ -23,6 +23,7 @@ return new class extends Migration
         });
 
         Schema::table('provider_metric_daily', function (Blueprint $table) {
+            $table->index('provider_id');
             $table->dropUnique(['provider_id', 'date']);
             $table->unique(['provider_id', 'method', 'date']);
         });
@@ -33,6 +34,7 @@ return new class extends Migration
         Schema::table('provider_metric_daily', function (Blueprint $table) {
             $table->dropUnique(['provider_id', 'method', 'date']);
             $table->unique(['provider_id', 'date']);
+            $table->dropIndex(['provider_id']);
             $table->dropColumn('method');
         });
     }

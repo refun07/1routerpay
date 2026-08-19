@@ -24,6 +24,16 @@ class SecurityHeadersTest extends TestCase
         $this->getJson('/api/public/faqs')->assertHeader('X-Content-Type-Options', 'nosniff');
     }
 
+    public function test_local_script_and_style_policy_allows_vite_dev_server(): void
+    {
+        app()['env'] = 'local';
+
+        $csp = $this->get('/')->headers->get('Content-Security-Policy');
+
+        $this->assertStringContainsString("script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* http://127.0.0.1:*", $csp);
+        $this->assertStringContainsString("style-src 'self' 'unsafe-inline' http://localhost:* http://127.0.0.1:*", $csp);
+    }
+
     public function test_production_script_policy_uses_a_nonce_instead_of_unsafe_inline(): void
     {
         app()['env'] = 'production';

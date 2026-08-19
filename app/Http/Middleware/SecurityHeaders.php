@@ -36,16 +36,22 @@ class SecurityHeaders
         // production never needs `unsafe-inline`. Vite's dev client does.
         $nonce = $request->attributes->get('csp_nonce');
 
+        $viteDevSrc = "http://localhost:* http://127.0.0.1:*";
+
         $scriptSrc = app()->environment('local')
-            ? "'self' 'unsafe-inline' 'unsafe-eval'"
+            ? "'self' 'unsafe-inline' 'unsafe-eval' {$viteDevSrc}"
             : "'self' 'nonce-{$nonce}'";
+
+        $styleSrc = app()->environment('local')
+            ? "'self' 'unsafe-inline' {$viteDevSrc}"
+            : "'self' 'unsafe-inline'";
 
         $connectSrc = app()->environment('local') ? "'self' ws: http: https:" : "'self'";
 
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
             "script-src {$scriptSrc}",
-            "style-src 'self' 'unsafe-inline'",
+            "style-src {$styleSrc}",
             "img-src 'self' data:",
             "font-src 'self' data:",
             "connect-src {$connectSrc}",
